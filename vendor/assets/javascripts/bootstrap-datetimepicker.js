@@ -666,7 +666,7 @@ THE SOFTWARE.
                                     m: picker.date.minutes(),
                                     s: picker.date.seconds()
                                 });
-                                set();
+                                set(target);
                                 notifyChange(oldDate, e.type);
                             }
                             showMode(-1);
@@ -705,7 +705,7 @@ THE SOFTWARE.
                                     y: year, M: month, d: Math.min(28, day)
                                 });
                                 fillDate();
-                                set();
+                                set(target);
                                 notifyChange(oldDate, e.type);
                             }
                             break;
@@ -800,12 +800,13 @@ THE SOFTWARE.
         doAction = function (e) {
             var oldDate = moment(picker.date),
                 action = $(e.currentTarget).data('action'),
+                target = $(e.currentTarget).closest('span, td, th'),
                 rv = actions[action].apply(picker, arguments);
             stopEvent(e);
             if (!picker.date) {
                 picker.date = moment({y: 1970});
             }
-            set();
+            set(target);
             fillTime();
             notifyChange(oldDate, e.type);
             return rv;
@@ -952,7 +953,7 @@ THE SOFTWARE.
             }
         },
 
-        set = function () {
+        set = function ($src) {
             moment.locale(picker.options.language);
             var formatted = '';
             if (!picker.unset) {
@@ -960,7 +961,7 @@ THE SOFTWARE.
             }
             getPickerInput().val(formatted);
             picker.element.data('date', formatted);
-            if (!picker.options.pickTime) {
+            if (!picker.options.pickTime || ($src && $src.is('.day'))) {
                 picker.hide();
             }
         },
